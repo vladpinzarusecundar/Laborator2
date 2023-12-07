@@ -1,0 +1,102 @@
+#include <iostream>
+#include <vector>
+
+class Polinom {
+private:
+    int grad;
+    std::vector<double> coeficienti;
+
+public:
+    // Constructor implicit
+    Polinom() : grad(0), coeficienti({0.0}) {}
+
+    // Constructor de inițializare după un argument (gradul)
+    Polinom(int grad) : grad(grad), coeficienti(grad + 1, 0.0) {}
+
+    // Constructor de inițializare după două argumente (gradul și tabloul de coeficienți)
+    Polinom(int grad, const std::vector<double>& coeficienti) : grad(grad), coeficienti(coeficienti) {}
+
+    // Metodă pentru calcularea valorii polinomului pentru un argument dat
+    double calculareValoare(double x) const {
+        double rezultat = 0.0;
+        for (int i = 0; i <= grad; ++i) {
+            rezultat += coeficienti[i] * pow(x, i);
+        }
+        return rezultat;
+    }
+
+    // Operator de adunare
+    Polinom operator+(const Polinom& other) const {
+        int noulGrad = std::max(grad, other.grad);
+        std::vector<double> noiCoeficienti(noulGrad + 1, 0.0);
+
+        for (int i = 0; i <= grad; ++i) {
+            noiCoeficienti[i] += coeficienti[i];
+        }
+
+        for (int i = 0; i <= other.grad; ++i) {
+            noiCoeficienti[i] += other.coeficienti[i];
+        }
+
+        return Polinom(noulGrad, noiCoeficienti);
+    }
+
+    // Operator de scădere
+    Polinom operator-(const Polinom& other) const {
+        int noulGrad = std::max(grad, other.grad);
+        std::vector<double> noiCoeficienti(noulGrad + 1, 0.0);
+
+        for (int i = 0; i <= grad; ++i) {
+            noiCoeficienti[i] += coeficienti[i];
+        }
+
+        for (int i = 0; i <= other.grad; ++i) {
+            noiCoeficienti[i] -= other.coeficienti[i];
+        }
+
+        return Polinom(noulGrad, noiCoeficienti);
+    }
+
+    // Operator de înmulțire
+    Polinom operator*(const Polinom& other) const {
+        int noulGrad = grad + other.grad;
+        std::vector<double> noiCoeficienti(noulGrad + 1, 0.0);
+
+        for (int i = 0; i <= grad; ++i) {
+            for (int j = 0; j <= other.grad; ++j) {
+                noiCoeficienti[i + j] += coeficienti[i] * other.coeficienti[j];
+            }
+        }
+
+        return Polinom(noulGrad, noiCoeficienti);
+    }
+
+    // Funcție prietenă pentru afișarea polinomului la ecran
+    friend std::ostream& operator<<(std::ostream& out, const Polinom& polinom) {
+        for (int i = polinom.grad; i >= 0; --i) {
+            out << polinom.coeficienti[i];
+            if (i > 0) {
+                out << "x^" << i << " + ";
+            }
+        }
+        return out;
+    }
+};
+
+int main() {
+    // Exemplu de utilizare
+    Polinom p1(2, {1, 2, 1}); // polinomul x^2 + 2x + 1
+    Polinom p2(1, {1, -1});   // polinomul x - 1
+
+    Polinom suma = p1 + p2;
+    Polinom diferenta = p1 - p2;
+    Polinom produs = p1 * p2;
+
+    std::cout << "p1: " << p1 << std::endl;
+    std::cout << "p2: " << p2 << std::endl;
+    std::cout << "Suma: " << suma << std::endl;
+    std::cout << "Diferenta: " << diferenta << std::endl;
+    std::cout << "Produs: " << produs << std::endl;
+
+    return 0;
+}
